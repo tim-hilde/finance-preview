@@ -3,32 +3,33 @@ const { useState: useS, useMemo: useM, useEffect: useE, useRef: useR } = React;
 
 const STORAGE_KEY = "sparplaner.v1";
 const HORIZON_KEY = "sparplaner.horizon";
+const THEME_KEY = "sparplaner.theme";
 
 const ASSET_TYPES = {
   cash: {
     label: "Tagesgeld",
-    color: "oklch(0.70 0.13 45)",
+    color: "var(--c-cash)",
     rate: 2.5, rateMin: 0, rateMax: 6,
     monthly: 200, startCapital: 5000,
     description: "Sicheres Cash-Konto, jederzeit verfügbar"
   },
   etf: {
     label: "ETF-Sparplan",
-    color: "oklch(0.55 0.09 155)",
+    color: "var(--c-etf)",
     rate: 7.0, rateMin: 0, rateMax: 12,
     monthly: 300, startCapital: 5000,
     description: "Breit gestreuter Aktien-ETF (z.B. MSCI World)"
   },
   bonds: {
     label: "Anleihen",
-    color: "oklch(0.62 0.10 250)",
+    color: "var(--c-extra-1)",
     rate: 3.5, rateMin: 0, rateMax: 7,
     monthly: 100, startCapital: 0,
     description: "Regelmäßige Zinsen, geringeres Risiko als Aktien"
   },
   fixed: {
     label: "Festgeld",
-    color: "oklch(0.70 0.10 80)",
+    color: "var(--c-extra-2)",
     rate: 3.0, rateMin: 0, rateMax: 5,
     monthly: 0, startCapital: 10000,
     description: "Garantierter Zinssatz, kein Kursrisiko"
@@ -56,9 +57,46 @@ function newAsset(kind) {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.assets)) {
+      parsed.assets = parsed.assets.map((a) => {
+        const t = ASSET_TYPES[a.kind];
+        return t ? { ...a, color: t.color } : a;
+      });
+    }
+    return parsed;
   } catch (e) {}
   return null;
+}
+
+function loadTheme() {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    return v === "light" || v === "dark" ? v : null;
+  } catch (e) { return null; }
+}
+
+function effectiveTheme(theme) {
+  if (theme) return theme;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+    </svg>
+  );
 }
 function saveState(state) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
@@ -79,11 +117,37 @@ function App() {
   ]);
   const [showAddMenu, setShowAddMenu] = useS(false);
   const [horizon, setHorizon] = useS(loadHorizon());
+  const [theme, setTheme] = useS(loadTheme());
+  const [, forceTick] = useS(0);
   const addBtnRef = useR(null);
   const addMenuRef = useR(null);
 
   useE(() => { saveState({ assets }); }, [assets]);
   useE(() => { try { localStorage.setItem(HORIZON_KEY, String(horizon)); } catch (e) {} }, [horizon]);
+
+  useE(() => {
+    const root = document.documentElement;
+    if (theme) {
+      root.dataset.theme = theme;
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    } else {
+      delete root.dataset.theme;
+      try { localStorage.removeItem(THEME_KEY); } catch (e) {}
+    }
+  }, [theme]);
+
+  useE(() => {
+    if (theme) return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => forceTick((t) => t + 1);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [theme]);
+
+  const effective = effectiveTheme(theme);
+  function toggleTheme() {
+    setTheme(effective === "dark" ? "light" : "dark");
+  }
 
   useE(() => {
     if (!showAddMenu) return;
@@ -120,6 +184,14 @@ function App() {
 
   return (
     <div className="app">
+      <button
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={effective === "dark" ? "Zu hellem Modus wechseln" : "Zu dunklem Modus wechseln"}
+        title={effective === "dark" ? "Hell" : "Dunkel"}
+      >
+        {effective === "dark" ? <SunIcon /> : <MoonIcon />}
+      </button>
       <h1 className="greet">
         Wenn du <em>{horizon} Jahre</em> dranbleibst, könntest du{" "}
         <em>{fmtEUR(totalEnd, { compact: true })}</em> auf dem Konto haben.
@@ -235,7 +307,7 @@ function App() {
                 </div>
               )}
               <div className="legend-item">
-                <span style={{ width: 18, height: 0, borderTop: "1.4px dashed oklch(0.35 0.02 60)" }} />
+                <span style={{ width: 18, height: 0, borderTop: "1.4px dashed var(--chart-contrib)" }} />
                 <span>Eingezahltes Kapital</span>
               </div>
             </div>

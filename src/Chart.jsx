@@ -110,11 +110,11 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
           {yTicks.map((t, i) => (
             <g key={i}>
               <line x1={0} x2={innerW} y1={yScale(t)} y2={yScale(t)}
-                stroke="oklch(0.92 0.012 70)" strokeWidth="1" />
+                stroke="var(--chart-grid)" strokeWidth="1" />
               <text
                 x={-10} y={yScale(t)} dy="0.32em"
                 textAnchor="end"
-                fontSize="11" fill="oklch(0.55 0.015 60)"
+                fontSize="11" fill="var(--chart-y-label)"
                 style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {fmtEUR(t, { compact: true, decimals: 0 })}
@@ -141,21 +141,21 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
           {showContributionLine && (
             <path d={linePathFor(timeline.contribTotals)}
               fill="none"
-              stroke="oklch(0.35 0.02 60)"
+              stroke="var(--chart-contrib)"
               strokeWidth="1.4"
               strokeDasharray="3 4"
             />
           )}
 
-          <line x1={0} x2={innerW} y1={innerH} y2={innerH} stroke="oklch(0.85 0.015 70)" strokeWidth="1" />
+          <line x1={0} x2={innerW} y1={innerH} y2={innerH} stroke="var(--chart-axis)" strokeWidth="1" />
           {xTicks.map(y => (
             <g key={y}>
               <line x1={xScale(y * 12)} x2={xScale(y * 12)}
                 y1={innerH} y2={innerH + 4}
-                stroke="oklch(0.75 0.015 70)" />
+                stroke="var(--chart-tick)" />
               <text x={xScale(y * 12)} y={innerH + 18}
                 textAnchor="middle"
-                fontSize="11" fill="oklch(0.50 0.015 60)"
+                fontSize="11" fill="var(--chart-axis-label)"
                 style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {y === 0 ? "heute" : `+${y}J`}
@@ -167,14 +167,14 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
             <g>
               <line x1={xScale(hover.month)} x2={xScale(hover.month)}
                 y1={0} y2={innerH}
-                stroke="oklch(0.40 0.05 60)" strokeWidth="1" strokeDasharray="2 3" />
+                stroke="var(--chart-crosshair)" strokeWidth="1" strokeDasharray="2 3" />
               {visibleAssets.map((a, idx) => {
                 const cum = stacks[idx];
                 const yTop = yScale(cum.top[hover.month]);
                 return (
                   <circle key={a.id}
                     cx={xScale(hover.month)} cy={style === "stacked" ? yTop : yScale(timeline.perAsset[a.id][hover.month].value)}
-                    r="3.5" fill="white" stroke={a.color} strokeWidth="2" />
+                    r="3.5" fill="var(--chart-dot)" stroke={a.color} strokeWidth="2" />
                 );
               })}
             </g>
@@ -212,7 +212,7 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
           &nbsp;<b>{fmtEUR(timeline.perAsset[a.id][month].value)}</b>
         </div>
       ))}
-      <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", margin: "6px 0", paddingTop: 6 }}>
+      <div style={{ borderTop: "1px solid var(--tt-sep)", margin: "6px 0", paddingTop: 6 }}>
         <div className="tt-row"><span style={{ flex: 1 }}>Gesamt</span>&nbsp;<b>{fmtEUR(total)}</b></div>
         <div className="tt-row" style={{ opacity: 0.75 }}>
           <span style={{ flex: 1 }}>davon Zinsen</span>&nbsp;{fmtEUR(interest)}
