@@ -5,7 +5,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
   const [hover, setHover] = useState(null);
   const svgRef = useRef(null);
 
-  const pad = { top: 18, right: 18, bottom: 36, left: 64 };
+  const pad = { top: 18, right: 18, bottom: 36, left: 82 };
   const W = width;
   const H = height;
   const innerW = W - pad.left - pad.right;
