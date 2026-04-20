@@ -50,7 +50,6 @@ function newAsset(kind) {
     rateMax: t.rateMax,
     monthly: t.monthly,
     startCapital: t.startCapital,
-    enabled: true
   };
 }
 
@@ -325,7 +324,7 @@ function buildInsights({ assets, timeline, horizon, totalEnd, totalContrib, mont
       out.push({
         glyph: "⇄",
         title: `Aus jedem Euro im ETF wird ${etfReturn.toFixed(2).replace(".", ",")}× — im Tagesgeld ${cashReturn.toFixed(2).replace(".", ",")}×`,
-        body: `Bei deinen aktuellen Annahmen rentiert sich der ETF um rund ${Math.round(diff)}% besser als das Tagesgeld. Dafür schwankt er kurzfristig stärker — Tagesgeld ist deine Liquiditätsreserve.`
+        body: `Bei deinen aktuellen Annahmen wächst jeder investierte Euro im ETF um rund ${Math.round(diff)}% stärker als im Tagesgeld. Dafür schwankt er kurzfristig stärker — Tagesgeld ist deine Liquiditätsreserve.`
       });
     }
   }

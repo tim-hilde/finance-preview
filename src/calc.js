@@ -35,7 +35,7 @@ function fmtPct(v, decimals = 1) {
 }
 
 function projectAsset(asset, months) {
-  const r = (asset.rate / 100) / 12;
+  const r = (Number(asset.rate) || 0) / 100 / 12;
   const m = Number(asset.monthly) || 0;
   let value = Number(asset.startCapital) || 0;
   let contributed = value;

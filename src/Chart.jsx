@@ -23,7 +23,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
   const xScale = (i) => (i / months) * innerW;
   const yScale = (v) => innerH - (v / yMax) * innerH;
 
-  const visibleAssets = assets.filter(a => a.enabled !== false);
+  const visibleAssets = assets;
 
   const stacks = useMemo(() => {
     const arr = [];
