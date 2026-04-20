@@ -80,9 +80,20 @@ function App() {
   const [showAddMenu, setShowAddMenu] = useS(false);
   const [horizon, setHorizon] = useS(loadHorizon());
   const addBtnRef = useR(null);
+  const addMenuRef = useR(null);
 
   useE(() => { saveState({ assets }); }, [assets]);
   useE(() => { try { localStorage.setItem(HORIZON_KEY, String(horizon)); } catch (e) {} }, [horizon]);
+
+  useE(() => {
+    if (!showAddMenu) return;
+    function onDown(e) {
+      if (!addBtnRef.current?.contains(e.target) && !addMenuRef.current?.contains(e.target))
+        setShowAddMenu(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [showAddMenu]);
 
   const timeline = useM(() => buildTimeline(assets, horizon), [assets, horizon]);
 
@@ -179,7 +190,7 @@ function App() {
               + Asset hinzufügen
             </button>
             {showAddMenu &&
-              <div className="menu" style={{ left: 20, right: 20, bottom: 60 }}>
+              <div ref={addMenuRef} className="menu" style={{ left: 20, right: 20, bottom: 60 }}>
                 {Object.entries(ASSET_TYPES).map(([key, t]) =>
                   <button key={key} onClick={() => addAsset(key)}>
                     <span className="swatch" style={{ background: t.color, width: 12, height: 12, borderRadius: 3, display: "inline-block" }} />
