@@ -145,15 +145,16 @@ function App() {
           onChange={(e) => setHorizon(parseInt(e.target.value))}
           style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
         />
-        <div className="horizon-ticks">
-          <span>5 J</span>
-          <span>10</span>
-          <span>15</span>
-          <span>20</span>
-          <span>25</span>
-          <span>30</span>
-          <span>35</span>
-          <span>40 J</span>
+        <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
+          {[5, 10, 15, 20, 25, 30, 35, 40].map(v => (
+            <span key={v} style={{
+              position: "absolute",
+              left: `calc(9px + ${(v - 5) / 35} * (100% - 18px))`,
+              transform: "translateX(-50%)"
+            }}>
+              {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
+            </span>
+          ))}
         </div>
       </div>
 
