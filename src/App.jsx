@@ -120,16 +120,6 @@ function App() {
 
   return (
     <div className="app">
-      <div className="topbar">
-        <div className="brand">
-          <div className="brand-mark" />
-          <div>
-            <div className="brand-name">Sparplaner</div>
-            <div className="brand-sub">Finanzen entscheiden, nicht hoffen</div>
-          </div>
-        </div>
-      </div>
-
       <h1 className="greet">
         Wenn du <em>{horizon} Jahre</em> dranbleibst, könntest du{" "}
         <em>{fmtEUR(totalEnd, { compact: true })}</em> auf dem Konto haben.
