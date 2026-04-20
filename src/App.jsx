@@ -152,7 +152,8 @@ function App() {
               <span key={v} style={{
                 position: "absolute",
                 left: `calc(${f * 100}% + ${9 - f * 18}px)`,
-                transform: "translateX(-50%)"
+                transform: "translateX(-50%)",
+                whiteSpace: "nowrap"
               }}>
                 {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
               </span>
