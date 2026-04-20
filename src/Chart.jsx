@@ -1,5 +1,5 @@
 /* Stacked area chart — pure SVG, with hover crosshair + tooltip */
-const { useState, useMemo, useRef, useEffect } = React;
+const { useState, useMemo, useRef } = React;
 
 function StackedAreaChart({ assets, timeline, width = 900, height = 380, showContributionLine = true, style = "stacked" }) {
   const [hover, setHover] = useState(null);
@@ -194,12 +194,6 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
 }
 
 function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
-  const ref = useRef(null);
-  const [pos, setPos] = useState({ x: clientX, y: clientY });
-  useEffect(() => {
-    setPos({ x: clientX, y: clientY });
-  }, [clientX, clientY]);
-
   const yrs = Math.floor(month / 12);
   const mos = month % 12;
   const total = assets.reduce((s, a) => s + timeline.perAsset[a.id][month].value, 0);
@@ -207,7 +201,7 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
   const interest = total - contributed;
 
   return ReactDOM.createPortal(
-    <div ref={ref} className="tt" style={{ left: pos.x, top: pos.y }}>
+    <div className="tt" style={{ left: clientX, top: clientY }}>
       <div style={{ fontWeight: 600, marginBottom: 4 }}>
         {month === 0 ? "Heute" : `Nach ${yrs}J ${mos > 0 ? mos + "M" : ""}`}
       </div>
