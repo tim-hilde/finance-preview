@@ -146,15 +146,18 @@ function App() {
           style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
         />
         <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
-          {[5, 10, 15, 20, 25, 30, 35, 40].map(v => (
-            <span key={v} style={{
-              position: "absolute",
-              left: `calc(9px + ${(v - 5) / 35} * (100% - 18px))`,
-              transform: "translateX(-50%)"
-            }}>
-              {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
-            </span>
-          ))}
+          {[5, 10, 15, 20, 25, 30, 35, 40].map(v => {
+            const f = (v - 5) / 35;
+            return (
+              <span key={v} style={{
+                position: "absolute",
+                left: `calc(${f * 100}% + ${9 - f * 18}px)`,
+                transform: "translateX(-50%)"
+              }}>
+                {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
+              </span>
+            );
+          })}
         </div>
       </div>
 
