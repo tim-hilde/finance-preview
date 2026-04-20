@@ -22,16 +22,16 @@ const ASSET_TYPES = {
   bonds: {
     label: "Anleihen",
     color: "oklch(0.62 0.10 250)",
-    rate: 3.5, rateMin: 0, rateMax: 8,
+    rate: 3.5, rateMin: 0, rateMax: 7,
     monthly: 100, startCapital: 0,
-    description: "Staats- und Unternehmensanleihen"
+    description: "Regelmäßige Zinsen, geringeres Risiko als Aktien"
   },
   fixed: {
     label: "Festgeld",
     color: "oklch(0.70 0.10 80)",
-    rate: 3.2, rateMin: 0, rateMax: 6,
+    rate: 3.0, rateMin: 0, rateMax: 5,
     monthly: 0, startCapital: 10000,
-    description: "Feste Laufzeit, höhere Zinsen als Tagesgeld"
+    description: "Garantierter Zinssatz, kein Kursrisiko"
   }
 };
 

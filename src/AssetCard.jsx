@@ -57,7 +57,7 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
 
       <div className="field" style={{ marginTop: 12 }}>
         <label style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>{asset.kind === "cash" ? "Zinssatz" : "Erwartete Rendite"} (jährlich)</span>
+          <span>{asset.kind === "etf" ? "Erwartete Rendite" : "Zinssatz"} (jährlich)</span>
           <span className="mono" style={{ color: "var(--ink)", fontSize: 13 }}>
             {asset.rate.toFixed(2).replace(".", ",")} %
           </span>
@@ -76,8 +76,9 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
         />
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--ink-mute)", marginTop: 2 }}>
           <span>{(asset.rateMin ?? 0).toFixed(1).replace(".", ",")}%</span>
-          {asset.kind === "cash"
-            ? <span>EZB-Niveau ≈ 2,5–4%</span>
+          {asset.kind === "cash" ? <span>EZB-Niveau ≈ 2,5–4%</span>
+            : asset.kind === "bonds" ? <span>Staatsanl. ≈ 2–3%, Unternehmensanl. ≈ 3–5%</span>
+            : asset.kind === "fixed" ? <span>Laufzeit 1–3 Jahre ≈ 2,5–3,5%</span>
             : <span>Welt-ETF langfristig ≈ 6–8%</span>
           }
           <span>{(asset.rateMax ?? 12).toFixed(1).replace(".", ",")}%</span>
