@@ -18,7 +18,7 @@ function nextShadeIndex(assets, kind) {
   for (let i = 0; i < SHADES_PER_CAT; i++) {
     if (!used.has(i)) return i;
   }
-  return assets.filter((a) => a.kind === kind).length % SHADES_PER_CAT;
+  return used.size % SHADES_PER_CAT;
 }
 
 window.assetColor = assetColor;

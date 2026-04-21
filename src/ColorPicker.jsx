@@ -25,7 +25,7 @@ function ColorPicker({ kind, shadeIndex, onChange, onClose, anchorRef }) {
           className={"color-swatch" + (i === shadeIndex ? " is-active" : "")}
           style={{ background: `var(--c-${kind}-${i})` }}
           onClick={() => { onChange(i); onClose(); }}
-          title={`Shade ${i + 1}`}
+          title={`Schattierung ${i + 1}`}
         />
       ))}
     </div>

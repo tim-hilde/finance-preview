@@ -1,9 +1,10 @@
 /* AssetCard — editable parameters per asset */
-const { useState: useStateAC, useRef: useRefAC } = React;
+const { useState: useStateAC, useRef: useRefAC, useCallback: useCallbackAC } = React;
 
 function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
   const [pickerOpen, setPickerOpen] = useStateAC(false);
   const swatchRef = useRefAC(null);
+  const closePicker = useCallbackAC(() => setPickerOpen(false), []);
 
   function setField(key, val) { onChange({ ...asset, [key]: val }); }
   function setNum(key, val) {
@@ -34,7 +35,7 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
             shadeIndex={asset.shadeIndex ?? 0}
             anchorRef={swatchRef}
             onChange={(idx) => setField("shadeIndex", idx)}
-            onClose={() => setPickerOpen(false)}
+            onClose={closePicker}
           />
         )}
         <input
