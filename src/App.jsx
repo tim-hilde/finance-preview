@@ -36,6 +36,7 @@ const ASSET_TYPES = {
 };
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
+window.uid = uid;
 
 function newAsset(kind) {
   const t = ASSET_TYPES[kind];
@@ -50,13 +51,18 @@ function newAsset(kind) {
     rateMax: t.rateMax,
     monthly: t.monthly,
     startCapital: t.startCapital,
+    lumpSums: [],
   };
 }
 
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const state = JSON.parse(raw);
+      state.assets = state.assets.map(a => ({ lumpSums: [], ...a }));
+      return state;
+    }
   } catch (e) {}
   return null;
 }
