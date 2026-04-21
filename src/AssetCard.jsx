@@ -1,7 +1,10 @@
 /* AssetCard — editable parameters per asset */
-const { useState: useStateAC } = React;
+const { useState: useStateAC, useRef: useRefAC } = React;
 
 function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
+  const [pickerOpen, setPickerOpen] = useStateAC(false);
+  const swatchRef = useRefAC(null);
+
   function setField(key, val) { onChange({ ...asset, [key]: val }); }
   function setNum(key, val) {
     const cleaned = String(val).replace(/\./g, "").replace(",", ".").replace(/[^\d.\-]/g, "");
@@ -14,8 +17,25 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
 
   return (
     <div className="asset">
-      <div className="asset-head">
-        <span className="swatch" style={{ background: assetColor(asset) }} />
+      <div className="asset-head" style={{ position: "relative" }}>
+        <button
+          ref={swatchRef}
+          type="button"
+          className="swatch-btn"
+          style={{ background: assetColor(asset) }}
+          onClick={() => setPickerOpen((v) => !v)}
+          aria-label="Farbe ändern"
+          aria-expanded={pickerOpen}
+        />
+        {pickerOpen && (
+          <ColorPicker
+            kind={asset.kind}
+            shadeIndex={asset.shadeIndex ?? 0}
+            anchorRef={swatchRef}
+            onChange={(idx) => setField("shadeIndex", idx)}
+            onClose={() => setPickerOpen(false)}
+          />
+        )}
         <input
           className="input"
           style={{ flex: 1, border: "none", padding: "2px 4px", background: "transparent", fontWeight: 600 }}
