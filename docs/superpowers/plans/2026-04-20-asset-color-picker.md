@@ -1,3 +1,4 @@
+{% raw %}
 # Asset Color Picker & Auto-Shading Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -746,6 +747,7 @@ Reload `http://localhost:3000`. Expected flow:
 git add src/AssetCard.jsx
 git commit -m "feat(asset-card): click swatch to open color picker"
 ```
+{% endraw %}
 
 ---
 
