@@ -100,8 +100,8 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
         <defs>
           {visibleAssets.map(a => (
             <linearGradient key={a.id} id={`grad-${a.id}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={a.color} stopOpacity="0.85" />
-              <stop offset="100%" stopColor={a.color} stopOpacity="0.55" />
+              <stop offset="0%" stopColor={assetColor(a)} stopOpacity="0.85" />
+              <stop offset="100%" stopColor={assetColor(a)} stopOpacity="0.55" />
             </linearGradient>
           ))}
         </defs>
@@ -126,7 +126,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
             <path key={s.asset.id}
               d={pathFor(s)}
               fill={`url(#grad-${s.asset.id})`}
-              stroke={s.asset.color}
+              stroke={assetColor(s.asset)}
               strokeWidth="1"
             />
           ))}
@@ -134,7 +134,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
             const pts = timeline.perAsset[a.id].map(p => p.value);
             return (
               <path key={a.id} d={linePathFor(pts)}
-                fill="none" stroke={a.color} strokeWidth="2.25" />
+                fill="none" stroke={assetColor(a)} strokeWidth="2.25" />
             );
           })}
 
@@ -174,7 +174,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
                 return (
                   <circle key={a.id}
                     cx={xScale(hover.month)} cy={style === "stacked" ? yTop : yScale(timeline.perAsset[a.id][hover.month].value)}
-                    r="3.5" fill="var(--chart-dot)" stroke={a.color} strokeWidth="2" />
+                    r="3.5" fill="var(--chart-dot)" stroke={assetColor(a)} strokeWidth="2" />
                 );
               })}
             </g>
@@ -207,7 +207,7 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
       </div>
       {assets.map(a => (
         <div key={a.id} className="tt-row">
-          <span className="swatch" style={{ background: a.color }} />
+          <span className="swatch" style={{ background: assetColor(a) }} />
           <span style={{ flex: 1 }}>{a.name}</span>
           &nbsp;<b>{fmtEUR(timeline.perAsset[a.id][month].value)}</b>
         </div>

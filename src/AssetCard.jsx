@@ -15,7 +15,7 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
   return (
     <div className="asset">
       <div className="asset-head">
-        <span className="swatch" style={{ background: asset.color }} />
+        <span className="swatch" style={{ background: assetColor(asset) }} />
         <input
           className="input"
           style={{ flex: 1, border: "none", padding: "2px 4px", background: "transparent", fontWeight: 600 }}
