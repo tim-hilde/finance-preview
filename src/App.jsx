@@ -5,31 +5,45 @@ const STORAGE_KEY = "sparplaner.v1";
 const HORIZON_KEY = "sparplaner.horizon";
 const THEME_KEY = "sparplaner.theme";
 
+const SHADES_PER_CAT = 6;
+
+function assetColor(asset) {
+  return `var(--c-${asset.kind}-${asset.shadeIndex ?? 0})`;
+}
+
+function nextShadeIndex(assets, kind) {
+  const used = new Set(
+    assets.filter((a) => a.kind === kind).map((a) => a.shadeIndex)
+  );
+  for (let i = 0; i < SHADES_PER_CAT; i++) {
+    if (!used.has(i)) return i;
+  }
+  return assets.filter((a) => a.kind === kind).length % SHADES_PER_CAT;
+}
+
+window.assetColor = assetColor;
+
 const ASSET_TYPES = {
   cash: {
     label: "Tagesgeld",
-    color: "var(--c-cash)",
     rate: 2.5, rateMin: 0, rateMax: 6,
     monthly: 200, startCapital: 5000,
     description: "Sicheres Cash-Konto, jederzeit verfügbar"
   },
   etf: {
     label: "ETF-Sparplan",
-    color: "var(--c-etf)",
     rate: 7.0, rateMin: 0, rateMax: 12,
     monthly: 300, startCapital: 5000,
     description: "Breit gestreuter Aktien-ETF (z.B. MSCI World)"
   },
   bonds: {
     label: "Anleihen",
-    color: "var(--c-extra-1)",
     rate: 3.5, rateMin: 0, rateMax: 7,
     monthly: 100, startCapital: 0,
     description: "Regelmäßige Zinsen, geringeres Risiko als Aktien"
   },
   fixed: {
     label: "Festgeld",
-    color: "var(--c-extra-2)",
     rate: 3.0, rateMin: 0, rateMax: 5,
     monthly: 0, startCapital: 10000,
     description: "Garantierter Zinssatz, kein Kursrisiko"
@@ -38,14 +52,14 @@ const ASSET_TYPES = {
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
-function newAsset(kind) {
+function newAsset(kind, shadeIndex = 0) {
   const t = ASSET_TYPES[kind];
   return {
     id: uid(),
     kind,
     kindLabel: t.label,
     name: t.label,
-    color: t.color,
+    shadeIndex,
     rate: t.rate,
     rateMin: t.rateMin,
     rateMax: t.rateMax,
@@ -60,10 +74,16 @@ function loadState() {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && Array.isArray(parsed.assets)) {
-      parsed.assets = parsed.assets.map((a) => {
-        const t = ASSET_TYPES[a.kind];
-        return t ? { ...a, color: t.color } : a;
-      });
+      const migrated = [];
+      for (const a of parsed.assets) {
+        const { color, ...rest } = a;
+        const shadeIndex =
+          typeof rest.shadeIndex === "number"
+            ? rest.shadeIndex
+            : nextShadeIndex(migrated, rest.kind);
+        migrated.push({ ...rest, shadeIndex });
+      }
+      parsed.assets = migrated;
     }
     return parsed;
   } catch (e) {}
@@ -112,8 +132,8 @@ function loadHorizon() {
 function App() {
   const initial = loadState();
   const [assets, setAssets] = useS(initial?.assets || [
-    { ...newAsset("cash"), name: "Tagesgeld", startCapital: 8000, monthly: 200, rate: 3.0 },
-    { ...newAsset("etf"), name: "MSCI World ETF", startCapital: 2000, monthly: 400, rate: 7.0 }
+    { ...newAsset("cash", 0), name: "Tagesgeld", startCapital: 8000, monthly: 200, rate: 3.0 },
+    { ...newAsset("etf", 0), name: "MSCI World ETF", startCapital: 2000, monthly: 400, rate: 7.0 }
   ]);
   const [showAddMenu, setShowAddMenu] = useS(false);
   const [horizon, setHorizon] = useS(loadHorizon());
@@ -178,7 +198,7 @@ function App() {
     setAssets((a) => a.filter((_, i) => i !== idx));
   }
   function addAsset(kind) {
-    setAssets((a) => [...a, newAsset(kind)]);
+    setAssets((a) => [...a, newAsset(kind, nextShadeIndex(a, kind))]);
     setShowAddMenu(false);
   }
 
@@ -260,7 +280,7 @@ function App() {
               <div ref={addMenuRef} className="menu" style={{ left: 20, right: 20, bottom: 60 }}>
                 {Object.entries(ASSET_TYPES).map(([key, t]) =>
                   <button key={key} onClick={() => addAsset(key)}>
-                    <span className="swatch" style={{ background: t.color, width: 12, height: 12, borderRadius: 3, display: "inline-block" }} />
+                    <span className="swatch" style={{ background: `var(--c-${key}-0)`, width: 12, height: 12, borderRadius: 3, display: "inline-block" }} />
                     <span style={{ flex: 1 }}>
                       <div>{t.label}</div>
                       <div style={{ fontSize: 11, color: "var(--ink-mute)", fontWeight: 400 }}>{t.description}</div>
@@ -299,7 +319,7 @@ function App() {
             <div className="legend">
               {assets.map((a) =>
                 <div key={a.id} className="legend-item">
-                  <span className="swatch" style={{ background: a.color }} />
+                  <span className="swatch" style={{ background: assetColor(a) }} />
                   <span>{a.name}</span>
                   <span className="mono" style={{ color: "var(--ink-mute)", fontSize: 12 }}>
                     {fmtPct(a.rate, 1)} p.a.
