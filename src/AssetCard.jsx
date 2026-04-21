@@ -25,7 +25,8 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
           style={{ background: assetColor(asset) }}
           onClick={() => setPickerOpen((v) => !v)}
           aria-label="Farbe ändern"
-          aria-expanded={pickerOpen}
+          aria-haspopup="listbox"
+          aria-expanded={pickerOpen ? "true" : "false"}
         />
         {pickerOpen && (
           <ColorPicker
