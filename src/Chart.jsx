@@ -180,8 +180,7 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
                       x={cx - 3.5} y={cy - 3.5}
                       width={7} height={7}
                       transform={`rotate(45 ${cx} ${cy})`}
-                      fill={a.color}
-                      stroke="var(--paper)" strokeWidth="1.2"
+                      fill={assetColor(a)}
                     />
                   );
                 })
@@ -228,7 +227,7 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
   const lumpsThisMonth = assets.flatMap(a =>
     (a.lumpSums || [])
       .filter(ls => (Number(ls.month) | 0) === month && (Number(ls.amount) || 0) > 0)
-      .map(ls => ({ assetName: a.name, color: a.color, amount: Number(ls.amount) }))
+      .map(ls => ({ assetName: a.name, color: assetColor(a), amount: Number(ls.amount) }))
   );
 
   return ReactDOM.createPortal(
