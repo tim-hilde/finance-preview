@@ -386,6 +386,34 @@
   }
   .icon-btn:hover { background: var(--bg-2); color: var(--ink); }
 
+  .swatch-btn {
+    padding: 0; border: 1px solid oklch(0 0 0 / 0.05);
+    background: transparent; border-radius: 4px;
+    width: 14px; height: 14px; cursor: pointer;
+    display: inline-block;
+  }
+  .swatch-btn:focus-visible { outline: 2px solid var(--accent-focus); outline-offset: 2px; }
+
+  .color-picker {
+    position: absolute; z-index: 20;
+    top: 22px; left: 0;
+    display: flex; gap: 6px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-md);
+    box-shadow: var(--shadow-2);
+    padding: 8px;
+  }
+  .color-swatch {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid oklch(0 0 0 / 0.08);
+    padding: 0; cursor: pointer;
+    transition: transform .1s;
+  }
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.is-active {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   /* KPIs */
   .kpis {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;
@@ -480,6 +508,7 @@
 
   <script type="text/babel" src="src/calc.js"></script>
   <script type="text/babel" src="src/Chart.jsx"></script>
+  <script type="text/babel" src="src/ColorPicker.jsx"></script>
   <script type="text/babel" src="src/AssetCard.jsx"></script>
   <script type="text/babel" src="src/App.jsx"></script>
 </body>
