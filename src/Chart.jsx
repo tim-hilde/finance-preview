@@ -163,6 +163,31 @@ function StackedAreaChart({ assets, timeline, width = 900, height = 380, showCon
             </g>
           ))}
 
+          <g style={{ pointerEvents: "none" }}>
+            {visibleAssets.flatMap(a =>
+              (a.lumpSums || [])
+                .filter(ls => {
+                  const mo = Number(ls.month) | 0;
+                  return mo >= 1 && mo <= months && (Number(ls.amount) || 0) > 0;
+                })
+                .map(ls => {
+                  const mo = Number(ls.month) | 0;
+                  const cx = xScale(mo);
+                  const cy = innerH + 24;
+                  return (
+                    <rect
+                      key={a.id + ":" + ls.id}
+                      x={cx - 3.5} y={cy - 3.5}
+                      width={7} height={7}
+                      transform={`rotate(45 ${cx} ${cy})`}
+                      fill={a.color}
+                      stroke="var(--paper)" strokeWidth="1.2"
+                    />
+                  );
+                })
+            )}
+          </g>
+
           {hover && (
             <g>
               <line x1={xScale(hover.month)} x2={xScale(hover.month)}
@@ -200,6 +225,12 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
   const contributed = assets.reduce((s, a) => s + timeline.perAsset[a.id][month].contributed, 0);
   const interest = total - contributed;
 
+  const lumpsThisMonth = assets.flatMap(a =>
+    (a.lumpSums || [])
+      .filter(ls => (Number(ls.month) | 0) === month && (Number(ls.amount) || 0) > 0)
+      .map(ls => ({ assetName: a.name, color: a.color, amount: Number(ls.amount) }))
+  );
+
   return ReactDOM.createPortal(
     <div className="tt" style={{ left: clientX, top: clientY }}>
       <div style={{ fontWeight: 600, marginBottom: 4 }}>
@@ -218,6 +249,17 @@ function ChartTooltip({ month, clientX, clientY, assets, timeline }) {
           <span style={{ flex: 1 }}>davon Zinsen</span>&nbsp;{fmtEUR(interest)}
         </div>
       </div>
+      {lumpsThisMonth.length > 0 && (
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", marginTop: 6, paddingTop: 6 }}>
+          {lumpsThisMonth.map((l, i) => (
+            <div key={i} className="tt-row" style={{ opacity: 0.9 }}>
+              <span className="swatch" style={{ background: l.color }} />
+              <span style={{ flex: 1 }}>Einmalzahlung {l.assetName}</span>
+              &nbsp;+{fmtEUR(l.amount)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>,
     document.body
   );

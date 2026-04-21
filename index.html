@@ -491,6 +491,11 @@
   }
   .horizon-value { display: flex; align-items: baseline; }
   .horizon-slider { margin: 4px 0 8px; }
+
+  /* Lump sum editor */
+  .lump-editor { border-top: 1px solid var(--line-soft); padding-top: 14px; margin-top: 14px; }
+  .lump-toggle:hover { color: var(--ink-soft); }
+  .lump-add-inline:hover { color: var(--ink) !important; }
 </style>
 <script>
   (function () {
@@ -509,6 +514,7 @@
   <script type="text/babel" src="src/calc.js"></script>
   <script type="text/babel" src="src/Chart.jsx"></script>
   <script type="text/babel" src="src/ColorPicker.jsx"></script>
+  <script type="text/babel" src="src/LumpSumEditor.jsx"></script>
   <script type="text/babel" src="src/AssetCard.jsx"></script>
   <script type="text/babel" src="src/App.jsx"></script>
 </body>

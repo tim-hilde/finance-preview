@@ -107,6 +107,12 @@ function AssetCard({ asset, onChange, onRemove, projection, horizonYears }) {
         </div>
       </div>
 
+      <LumpSumEditor
+        lumpSums={asset.lumpSums || []}
+        horizonYears={horizonYears}
+        onChange={(next) => onChange({ ...asset, lumpSums: next })}
+      />
+
       {final && (
         <div style={{
           marginTop: 14, padding: "10px 12px",

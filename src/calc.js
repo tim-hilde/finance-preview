@@ -41,11 +41,22 @@ function projectAsset(asset, months) {
   let contributed = value;
   let interestAcc = 0;
 
+  const lumpsByMonth = {};
+  for (const ls of asset.lumpSums || []) {
+    const mo = Number(ls.month) | 0;
+    const amt = Number(ls.amount) || 0;
+    if (mo >= 1 && mo <= months && amt > 0) {
+      lumpsByMonth[mo] = (lumpsByMonth[mo] || 0) + amt;
+    }
+  }
+
   const points = [{ value, contributed, interest: 0 }];
 
   for (let i = 1; i <= months; i++) {
     value += m;
     contributed += m;
+    const lump = lumpsByMonth[i] || 0;
+    if (lump) { value += lump; contributed += lump; }
     const gain = value * r;
     value += gain;
     interestAcc += gain;

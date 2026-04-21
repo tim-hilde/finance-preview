@@ -51,6 +51,7 @@ const ASSET_TYPES = {
 };
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
+window.uid = uid;
 
 function newAsset(kind, shadeIndex = 0) {
   const t = ASSET_TYPES[kind];
@@ -65,6 +66,7 @@ function newAsset(kind, shadeIndex = 0) {
     rateMax: t.rateMax,
     monthly: t.monthly,
     startCapital: t.startCapital,
+    lumpSums: [],
   };
 }
 
@@ -81,7 +83,7 @@ function loadState() {
           typeof rest.shadeIndex === "number"
             ? rest.shadeIndex
             : nextShadeIndex(migrated, rest.kind);
-        migrated.push({ ...rest, shadeIndex });
+        migrated.push({ lumpSums: [], ...rest, shadeIndex });
       }
       parsed.assets = migrated;
     }
