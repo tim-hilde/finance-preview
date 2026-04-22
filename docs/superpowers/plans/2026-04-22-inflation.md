@@ -409,7 +409,7 @@
           return (
             <span key={v} style={{
               position: "absolute",
-              left: `calc(${f * 100}% + ${9 - f * 18}px)`,
+              left: {% raw %}`calc(${f * 100}% + ${9 - f * 18}px)`{% endraw %},
               transform: "translateX(-50%)",
               whiteSpace: "nowrap"
             }}>
