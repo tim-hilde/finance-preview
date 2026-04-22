@@ -85,7 +85,41 @@ function buildTimeline(assets, years) {
   return { years, months, perAsset, totals, contribTotals };
 }
 
+function deflator(monthIdx, inflationPct) {
+  return Math.pow(1 + inflationPct / 100, -monthIdx / 12);
+}
+
+function toReal(value, monthIdx, inflationPct) {
+  return value * deflator(monthIdx, inflationPct);
+}
+
+function applyDisplayMode(timeline, { mode, inflationPct }) {
+  if (mode === "nominal") return timeline;
+
+  const { years, months, perAsset, totals, contribTotals } = timeline;
+
+  const newPerAsset = {};
+  for (const [id, points] of Object.entries(perAsset)) {
+    newPerAsset[id] = points.map((pt, i) => {
+      const d = deflator(i, inflationPct);
+      return {
+        value: pt.value * d,
+        contributed: pt.contributed * d,
+        interest: pt.interest * d,
+      };
+    });
+  }
+
+  const newTotals = totals.map((v, i) => v * deflator(i, inflationPct));
+  const newContribTotals = contribTotals.map((v, i) => v * deflator(i, inflationPct));
+
+  return { years, months, perAsset: newPerAsset, totals: newTotals, contribTotals: newContribTotals };
+}
+
 window.fmtEUR = fmtEUR;
 window.fmtPct = fmtPct;
 window.projectAsset = projectAsset;
 window.buildTimeline = buildTimeline;
+window.deflator = deflator;
+window.toReal = toReal;
+window.applyDisplayMode = applyDisplayMode;
