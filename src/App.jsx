@@ -183,7 +183,7 @@ function App() {
   useE(() => {
     if (theme) return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => forceTick((t) => t + 1);
+    const onChange = () => { setTheme(null); forceTick((t) => t + 1); };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, [theme]);
