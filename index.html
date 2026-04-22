@@ -416,9 +416,9 @@
 
   /* KPIs */
   .kpis {
-    display: grid; grid-template-columns: repeat(4, 1fr) minmax(160px, auto); gap: 12px; margin-bottom: 18px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;
   }
-  @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
   .kpi {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-md);
     padding: 14px 16px; box-shadow: var(--shadow-1);
@@ -472,14 +472,30 @@
   .tt .tt-row { display: flex; align-items: center; gap: 8px; }
   .tt .swatch { width: 8px; height: 8px; border-radius: 2px; }
 
-  /* Horizon bar */
+  /* Horizon row — horizon-bar + inflation-card side by side */
+  .horizon-row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
   .horizon-bar {
+    flex: 1 1 320px;
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
     padding: 18px 22px 14px;
-    margin-bottom: 22px;
     box-shadow: var(--shadow-1);
+  }
+  .inflation-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 18px 20px 16px;
+    box-shadow: var(--shadow-1);
+    display: flex;
+    align-items: center;
   }
   .horizon-label {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -492,12 +508,12 @@
   .horizon-value { display: flex; align-items: baseline; }
   .horizon-slider { margin: 4px 0 8px; }
 
-  /* Inflation controls — in KPI card */
+  /* Inflation controls */
   .inflation-block {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    height: 100%;
+    min-width: 160px;
   }
   .inflation-header {
     display: flex;
@@ -536,11 +552,11 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     overflow: hidden;
-    width: fit-content;
-    margin-top: 2px;
+    width: 100%;
   }
   .display-toggle button {
-    padding: 3px 10px;
+    flex: 1;
+    padding: 4px 10px;
     font: 500 11px Inter, sans-serif;
     background: transparent;
     border: none;
@@ -548,6 +564,7 @@
     cursor: pointer;
     transition: background .12s, color .12s;
     letter-spacing: 0.02em;
+    text-align: center;
   }
   .display-toggle button:first-child { border-right: 1px solid var(--line); }
   .display-toggle button[aria-pressed="true"] {

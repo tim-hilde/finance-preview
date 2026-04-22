@@ -252,36 +252,46 @@ function App() {
         wie sich deine Entscheidungen langfristig auswirken. Alle Werte werden monatlich verzinst.
       </p>
 
-      <div className="horizon-bar">
-        <div className="horizon-label">
-          <span className="horizon-caption">Planungshorizont</span>
-          <span className="horizon-value">
-            <span className="serif" style={{ fontSize: 32, lineHeight: 1 }}>{horizon}</span>
-            <span style={{ fontSize: 14, color: "var(--ink-soft)", marginLeft: 6 }}>Jahre</span>
-          </span>
+      <div className="horizon-row">
+        <div className="horizon-bar">
+          <div className="horizon-label">
+            <span className="horizon-caption">Planungshorizont</span>
+            <span className="horizon-value">
+              <span className="serif" style={{ fontSize: 32, lineHeight: 1 }}>{horizon}</span>
+              <span style={{ fontSize: 14, color: "var(--ink-soft)", marginLeft: 6 }}>Jahre</span>
+            </span>
+          </div>
+          <input
+            type="range"
+            className="slider horizon-slider"
+            min={5} max={40} step={1}
+            value={horizon}
+            onChange={(e) => setHorizon(parseInt(e.target.value))}
+            style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
+          />
+          <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
+            {[5, 10, 15, 20, 25, 30, 35, 40].map(v => {
+              const f = (v - 5) / 35;
+              return (
+                <span key={v} style={{
+                  position: "absolute",
+                  left: `calc(${f * 100}% + ${9 - f * 18}px)`,
+                  transform: "translateX(-50%)",
+                  whiteSpace: "nowrap"
+                }}>
+                  {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
+                </span>
+              );
+            })}
+          </div>
         </div>
-        <input
-          type="range"
-          className="slider horizon-slider"
-          min={5} max={40} step={1}
-          value={horizon}
-          onChange={(e) => setHorizon(parseInt(e.target.value))}
-          style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
-        />
-        <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
-          {[5, 10, 15, 20, 25, 30, 35, 40].map(v => {
-            const f = (v - 5) / 35;
-            return (
-              <span key={v} style={{
-                position: "absolute",
-                left: `calc(${f * 100}% + ${9 - f * 18}px)`,
-                transform: "translateX(-50%)",
-                whiteSpace: "nowrap"
-              }}>
-                {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
-              </span>
-            );
-          })}
+        <div className="inflation-card">
+          <InflationControls
+            inflation={inflation}
+            setInflation={setInflation}
+            displayMode={displayMode}
+            setDisplayMode={setDisplayMode}
+          />
         </div>
       </div>
 
@@ -335,14 +345,6 @@ function App() {
             <Kpi label="Faktor" value={(totalContrib > 0 ? totalEnd / totalContrib : 0).toFixed(2).replace(".", ",") + "×"}
               sub="Endwert / Eingezahlt"
               accent="kpi-accent-etf" />
-            <div className="kpi">
-              <InflationControls
-                inflation={inflation}
-                setInflation={setInflation}
-                displayMode={displayMode}
-                setDisplayMode={setDisplayMode}
-              />
-            </div>
           </div>
 
           <div className="card" style={{ marginBottom: 18 }}>
