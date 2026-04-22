@@ -411,7 +411,7 @@ function Kpi({ label, value, sub, accent }) {
 }
 
 function InflationControls({ inflation, setInflation, displayMode, setDisplayMode }) {
-  const p = (inflation / 8 * 100).toFixed(1) + "%";
+  const p = inflation / 8 * 100 + "%";
   return (
     <div className="inflation-block">
       <div className="inflation-header">
@@ -429,13 +429,13 @@ function InflationControls({ inflation, setInflation, displayMode, setDisplayMod
       />
       <div className="display-toggle">
         <button
-          aria-pressed={displayMode === "nominal" ? "true" : "false"}
+          aria-pressed={displayMode === "nominal"}
           onClick={() => setDisplayMode("nominal")}
         >
           Nominal
         </button>
         <button
-          aria-pressed={displayMode === "real" ? "true" : "false"}
+          aria-pressed={displayMode === "real"}
           onClick={() => setDisplayMode("real")}
         >
           Real
