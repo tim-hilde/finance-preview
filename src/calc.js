@@ -104,14 +104,14 @@ function applyDisplayMode(timeline, { mode, inflationPct }) {
       const d = deflator(i, inflationPct);
       return {
         value: pt.value * d,
-        contributed: pt.contributed * d,
+        contributed: pt.contributed,
         interest: pt.interest * d,
       };
     });
   }
 
   const newTotals = totals.map((v, i) => v * deflator(i, inflationPct));
-  const newContribTotals = contribTotals.map((v, i) => v * deflator(i, inflationPct));
+  const newContribTotals = contribTotals;
 
   return { years, months, perAsset: newPerAsset, totals: newTotals, contribTotals: newContribTotals };
 }

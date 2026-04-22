@@ -212,14 +212,15 @@ function App() {
   const finalIdx = horizon * 12;
   const totalEnd = timeline.totals[finalIdx];
   const totalContrib = timeline.contribTotals[finalIdx];
-  const totalInterest = totalEnd - totalContrib;
+  const totalContribNominal = timelineNominal.contribTotals[finalIdx];
+  const totalInterest = totalEnd - totalContribNominal;
   const interestShare = totalEnd > 0 ? totalInterest / totalEnd : 0;
   const monthlySum = assets.reduce((s, a) => s + (Number(a.monthly) || 0), 0);
   const startSum = assets.reduce((s, a) => s + (Number(a.startCapital) || 0), 0);
 
   const insights = useM(
-    () => buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation }),
-    [assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation]
+    () => buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, totalContribNominal, monthlySum, startSum, inflation }),
+    [assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, totalContribNominal, monthlySum, startSum, inflation]
   );
 
   function updateAsset(idx, next) {
@@ -337,12 +338,12 @@ function App() {
           <div className="kpis">
             <Kpi label="Endwert" value={fmtEUR(totalEnd, { compact: totalEnd >= 1e6 })}
               sub={`in ${horizon} Jahren`} />
-            <Kpi label="Eingezahlt" value={fmtEUR(totalContrib, { compact: totalContrib >= 1e6 })}
+            <Kpi label="Eingezahlt" value={fmtEUR(totalContribNominal, { compact: totalContribNominal >= 1e6 })}
               sub={`Start ${fmtEUR(startSum, { compact: true })} + ${fmtEUR(monthlySum)}/Monat`} />
             <Kpi label="Zinsgewinn" value={fmtEUR(totalInterest, { compact: totalInterest >= 1e6 })}
               sub={fmtPct(interestShare * 100, 0) + " des Endwerts"}
               accent="kpi-accent-cash" />
-            <Kpi label="Faktor" value={(totalContrib > 0 ? totalEnd / totalContrib : 0).toFixed(2).replace(".", ",") + "×"}
+            <Kpi label="Faktor" value={(totalContribNominal > 0 ? totalEnd / totalContribNominal : 0).toFixed(2).replace(".", ",") + "×"}
               sub="Endwert / Eingezahlt"
               accent="kpi-accent-etf" />
           </div>
@@ -450,9 +451,9 @@ function InflationControls({ inflation, setInflation, displayMode, setDisplayMod
   );
 }
 
-function buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation }) {
+function buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, totalContribNominal, monthlySum, startSum, inflation }) {
   const out = [];
-  const interest = totalEnd - totalContrib;
+  const interest = totalEnd - totalContribNominal;
 
   if (monthlySum > 0) {
     const months = timeline.months;
@@ -481,7 +482,7 @@ function buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, t
   out.push({
     glyph: "%",
     title: `${fmtPct(share * 100, 0)} deines Endvermögens sind „geschenkt"`,
-    body: `Von ${fmtEUR(totalEnd)} Endwert hast du ${fmtEUR(totalContrib)} selbst eingezahlt — ${fmtEUR(interest)} kommen aus Zinsen und Kursgewinnen.`
+    body: `Von ${fmtEUR(totalEnd)} Endwert hast du ${fmtEUR(totalContribNominal)} selbst eingezahlt — ${fmtEUR(interest)} kommen aus Zinsen und Kursgewinnen.`
   });
 
   const etf = assets.find((a) => a.kind === "etf");
@@ -489,8 +490,8 @@ function buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, t
   if (etf && cash) {
     const etfEnd = timeline.perAsset[etf.id][timeline.months].value;
     const cashEnd = timeline.perAsset[cash.id][timeline.months].value;
-    const etfContrib = timeline.perAsset[etf.id][timeline.months].contributed;
-    const cashContrib = timeline.perAsset[cash.id][timeline.months].contributed;
+    const etfContrib = timelineNominal.perAsset[etf.id][timeline.months].contributed;
+    const cashContrib = timelineNominal.perAsset[cash.id][timeline.months].contributed;
     const etfReturn = etfContrib > 0 ? etfEnd / etfContrib : 0;
     const cashReturn = cashContrib > 0 ? cashEnd / cashContrib : 0;
     if (etfReturn > 0 && cashReturn > 0) {

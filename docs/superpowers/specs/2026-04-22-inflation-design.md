@@ -17,15 +17,14 @@ Die `horizon-bar` bekommt einen zweiten, kompakten Bereich auf der rechten Seite
 - **Inflations-Slider:** Label „Inflation" mit Prozentwert (z.B. „2,0 %"), Slider 0–8 %, Step 0,1 %, Orientierung analog zum Horizon-Slider
 - **Nominal/Real-Toggle:** Segmented-Control mit zwei Buttons „Nominal" | „Real", `aria-pressed`-Semantik
 
-Bei **Real** werden alle EUR-Beträge auf heutige Kaufkraft diskontiert:
+Bei **Real** wird der Endwert auf heutige Kaufkraft diskontiert:
 
-- Chart-Flächen und die gestrichelte Contributions-Linie
-- Alle 4 KPIs (Endwert, Eingezahlt, Zinsgewinn): werden auf reale Kaufkraft umgerechnet
-- Faktor-KPI: bleibt `realEnd / realContrib` — da beide Werte diskontiert werden und spätere Einzahlungen stärker schrumpfen als frühere, ändert sich der Faktor leicht. Das ist mathematisch korrekt und muss nicht gesondert behandelt werden.
+- Chart-Flächen und gestrichelte Contributions-Linie
+- Endwert-KPI: wird auf reale Kaufkraft diskontiert
+- Zinsgewinn-KPI: `realEnd - nominalContrib` (nominal eingezahlte Beträge minus realer Endwert)
+- Faktor-KPI: bleibt `realEnd / nominalContrib` — zeigt echte Kaufkraft-Wachstum
 - Endwert-Block in jeder AssetCard
 - Beträge in den Insights
-
-Eingezahlte Beträge werden **pro Einzahlungsmonat** diskontiert (nicht pauschal): 300 €/Monat im Monat 240 tragen weniger zur realen Gesamtsumme bei als 300 € heute.
 
 Der Horizon-Slider und alle %-Angaben (Zinssätze, Inflationsrate) bleiben immer nominal.
 
@@ -56,7 +55,7 @@ function toReal(value, monthIdx, inflationPct) {
 // mode: "nominal" | "real"
 function applyDisplayMode(timeline, { mode, inflationPct }) {
   if (mode === "nominal") return timeline;
-  // Baut neue perAsset, totals, contribTotals mit pro-Monat diskontierten Werten
+  // Diskontiert nur totals (Endwert), NICHT contribTotals (Einzahlungen)
   // Returned dasselbe Shape wie buildTimeline
 }
 ```
