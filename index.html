@@ -416,9 +416,9 @@
 
   /* KPIs */
   .kpis {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;
+    display: grid; grid-template-columns: repeat(4, 1fr) minmax(160px, auto); gap: 12px; margin-bottom: 18px;
   }
-  @media (max-width: 720px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
   .kpi {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-md);
     padding: 14px 16px; box-shadow: var(--shadow-1);
@@ -480,14 +480,6 @@
     padding: 18px 22px 14px;
     margin-bottom: 22px;
     box-shadow: var(--shadow-1);
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .horizon-main {
-    flex: 1 1 260px;
-    min-width: 220px;
   }
   .horizon-label {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -500,13 +492,12 @@
   .horizon-value { display: flex; align-items: baseline; }
   .horizon-slider { margin: 4px 0 8px; }
 
-  /* Inflation controls — compact, secondary */
+  /* Inflation controls — in KPI card */
   .inflation-block {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    min-width: 140px;
-    padding-top: 2px;
+    gap: 8px;
+    height: 100%;
   }
   .inflation-header {
     display: flex;
