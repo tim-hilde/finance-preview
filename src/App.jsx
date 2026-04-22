@@ -250,36 +250,44 @@ function App() {
       </p>
 
       <div className="horizon-bar">
-        <div className="horizon-label">
-          <span className="horizon-caption">Planungshorizont</span>
-          <span className="horizon-value">
-            <span className="serif" style={{ fontSize: 32, lineHeight: 1 }}>{horizon}</span>
-            <span style={{ fontSize: 14, color: "var(--ink-soft)", marginLeft: 6 }}>Jahre</span>
-          </span>
+        <div className="horizon-main">
+          <div className="horizon-label">
+            <span className="horizon-caption">Planungshorizont</span>
+            <span className="horizon-value">
+              <span className="serif" style={{ fontSize: 32, lineHeight: 1 }}>{horizon}</span>
+              <span style={{ fontSize: 14, color: "var(--ink-soft)", marginLeft: 6 }}>Jahre</span>
+            </span>
+          </div>
+          <input
+            type="range"
+            className="slider horizon-slider"
+            min={5} max={40} step={1}
+            value={horizon}
+            onChange={(e) => setHorizon(parseInt(e.target.value))}
+            style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
+          />
+          <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
+            {[5, 10, 15, 20, 25, 30, 35, 40].map(v => {
+              const f = (v - 5) / 35;
+              return (
+                <span key={v} style={{
+                  position: "absolute",
+                  left: `calc(${f * 100}% + ${9 - f * 18}px)`,
+                  transform: "translateX(-50%)",
+                  whiteSpace: "nowrap"
+                }}>
+                  {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
+                </span>
+              );
+            })}
+          </div>
         </div>
-        <input
-          type="range"
-          className="slider horizon-slider"
-          min={5} max={40} step={1}
-          value={horizon}
-          onChange={(e) => setHorizon(parseInt(e.target.value))}
-          style={{ "--p": (horizon - 5) / 35 * 100 + "%" }}
+        <InflationControls
+          inflation={inflation}
+          setInflation={setInflation}
+          displayMode={displayMode}
+          setDisplayMode={setDisplayMode}
         />
-        <div style={{ position: "relative", height: 16, fontSize: 10, color: "var(--ink-mute)", fontVariantNumeric: "tabular-nums" }}>
-          {[5, 10, 15, 20, 25, 30, 35, 40].map(v => {
-            const f = (v - 5) / 35;
-            return (
-              <span key={v} style={{
-                position: "absolute",
-                left: `calc(${f * 100}% + ${9 - f * 18}px)`,
-                transform: "translateX(-50%)",
-                whiteSpace: "nowrap"
-              }}>
-                {v === 5 ? "5 J" : v === 40 ? "40 J" : v}
-              </span>
-            );
-          })}
-        </div>
       </div>
 
       <div className="grid">
@@ -398,6 +406,41 @@ function Kpi({ label, value, sub, accent }) {
       <div className="kpi-label">{label}</div>
       <div className={"kpi-val " + (accent || "")}>{value}</div>
       <div className="kpi-sub">{sub}</div>
+    </div>
+  );
+}
+
+function InflationControls({ inflation, setInflation, displayMode, setDisplayMode }) {
+  const p = (inflation / 8 * 100).toFixed(1) + "%";
+  return (
+    <div className="inflation-block">
+      <div className="inflation-header">
+        <span className="inflation-caption">Inflation</span>
+        <span className="inflation-value">{inflation.toFixed(1).replace(".", ",")} %</span>
+      </div>
+      <input
+        type="range"
+        className="inflation-slider"
+        min={0} max={8} step={0.1}
+        value={inflation}
+        onChange={(e) => setInflation(parseFloat(e.target.value))}
+        style={{ "--p": p }}
+        aria-label="Inflationsrate"
+      />
+      <div className="display-toggle">
+        <button
+          aria-pressed={displayMode === "nominal" ? "true" : "false"}
+          onClick={() => setDisplayMode("nominal")}
+        >
+          Nominal
+        </button>
+        <button
+          aria-pressed={displayMode === "real" ? "true" : "false"}
+          onClick={() => setDisplayMode("real")}
+        >
+          Real
+        </button>
+      </div>
     </div>
   );
 }
