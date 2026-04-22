@@ -217,7 +217,7 @@ function App() {
   const monthlySum = assets.reduce((s, a) => s + (Number(a.monthly) || 0), 0);
   const startSum = assets.reduce((s, a) => s + (Number(a.startCapital) || 0), 0);
 
-  const insights = buildInsights({ assets, timeline, horizon, totalEnd, totalContrib, monthlySum, startSum });
+  const insights = buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation });
 
   function updateAsset(idx, next) {
     setAssets((a) => a.map((x, i) => i === idx ? next : x));
@@ -445,7 +445,7 @@ function InflationControls({ inflation, setInflation, displayMode, setDisplayMod
   );
 }
 
-function buildInsights({ assets, timeline, horizon, totalEnd, totalContrib, monthlySum, startSum }) {
+function buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation }) {
   const out = [];
   const interest = totalEnd - totalContrib;
 
@@ -504,6 +504,18 @@ function buildInsights({ assets, timeline, horizon, totalEnd, totalContrib, mont
       glyph: "€",
       title: `Du sparst ${fmtEUR(annual)} pro Jahr`,
       body: `Über ${horizon} Jahre macht das ${fmtEUR(annual * horizon)} an reinen Einzahlungen. Schon ${fmtEUR(50)} mehr im Monat würden deinen Endwert spürbar verschieben — probier es im Slider aus.`
+    });
+  }
+
+  if (inflation > 0) {
+    const finalIdx = horizon * 12;
+    const nominalEnd = timelineNominal.totals[finalIdx];
+    const realEnd = applyDisplayMode(timelineNominal, { mode: "real", inflationPct: inflation }).totals[finalIdx];
+    const lostShare = nominalEnd > 0 ? (nominalEnd - realEnd) / nominalEnd : 0;
+    out.push({
+      glyph: "↓",
+      title: `Inflation frisst ${fmtPct(lostShare * 100, 0)} deines Endwerts`,
+      body: `Nominal erreichst du ${fmtEUR(nominalEnd, { compact: nominalEnd >= 1e6 })}. Bei ${fmtPct(inflation, 1)} Inflation bleibt real eine Kaufkraft von ${fmtEUR(realEnd, { compact: realEnd >= 1e6 })} — gemessen in heutigen Euro.`
     });
   }
 
