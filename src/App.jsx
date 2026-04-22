@@ -217,7 +217,10 @@ function App() {
   const monthlySum = assets.reduce((s, a) => s + (Number(a.monthly) || 0), 0);
   const startSum = assets.reduce((s, a) => s + (Number(a.startCapital) || 0), 0);
 
-  const insights = buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation });
+  const insights = useM(
+    () => buildInsights({ assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation }),
+    [assets, timeline, timelineNominal, horizon, totalEnd, totalContrib, monthlySum, startSum, inflation]
+  );
 
   function updateAsset(idx, next) {
     setAssets((a) => a.map((x, i) => i === idx ? next : x));
