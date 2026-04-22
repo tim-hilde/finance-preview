@@ -1,3 +1,4 @@
+{% raw %}
 # Inflation Feature Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -409,7 +410,7 @@
           return (
             <span key={v} style={{
               position: "absolute",
-              left: {% raw %}`calc(${f * 100}% + ${9 - f * 18}px)`{% endraw %},
+              left: `calc(${f * 100}% + ${9 - f * 18}px)`,
               transform: "translateX(-50%)",
               whiteSpace: "nowrap"
             }}>
@@ -539,4 +540,5 @@
   ```bash
   git add -A
   git commit -m "chore: post-review cleanup"
+{% endraw %}
   ```
