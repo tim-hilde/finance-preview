@@ -4,6 +4,8 @@ const { useState: useS, useMemo: useM, useEffect: useE, useRef: useR } = React;
 const STORAGE_KEY = "sparplaner.v1";
 const HORIZON_KEY = "sparplaner.horizon";
 const THEME_KEY = "sparplaner.theme";
+const INFLATION_KEY = "sparplaner.inflation";
+const DISPLAY_MODE_KEY = "sparplaner.displayMode";
 
 const SHADES_PER_CAT = 6;
 
@@ -99,6 +101,22 @@ function loadTheme() {
   } catch (e) { return null; }
 }
 
+function loadInflation() {
+  try {
+    const v = parseFloat(localStorage.getItem(INFLATION_KEY));
+    if (!isNaN(v) && v >= 0 && v <= 8) return v;
+  } catch (e) {}
+  return 2.0;
+}
+
+function loadDisplayMode() {
+  try {
+    const v = localStorage.getItem(DISPLAY_MODE_KEY);
+    if (v === "nominal" || v === "real") return v;
+  } catch (e) {}
+  return "nominal";
+}
+
 function effectiveTheme(theme) {
   if (theme) return theme;
   return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -141,11 +159,15 @@ function App() {
   const [horizon, setHorizon] = useS(loadHorizon());
   const [theme, setTheme] = useS(loadTheme());
   const [, forceTick] = useS(0);
+  const [inflation, setInflation] = useS(loadInflation());
+  const [displayMode, setDisplayMode] = useS(loadDisplayMode());
   const addBtnRef = useR(null);
   const addMenuRef = useR(null);
 
   useE(() => { saveState({ assets }); }, [assets]);
   useE(() => { try { localStorage.setItem(HORIZON_KEY, String(horizon)); } catch (e) {} }, [horizon]);
+  useE(() => { try { localStorage.setItem(INFLATION_KEY, String(inflation)); } catch (e) {} }, [inflation]);
+  useE(() => { try { localStorage.setItem(DISPLAY_MODE_KEY, displayMode); } catch (e) {} }, [displayMode]);
 
   useE(() => {
     const root = document.documentElement;
@@ -181,7 +203,11 @@ function App() {
     return () => document.removeEventListener("mousedown", onDown);
   }, [showAddMenu]);
 
-  const timeline = useM(() => buildTimeline(assets, horizon), [assets, horizon]);
+  const timelineNominal = useM(() => buildTimeline(assets, horizon), [assets, horizon]);
+  const timeline = useM(
+    () => applyDisplayMode(timelineNominal, { mode: displayMode, inflationPct: inflation }),
+    [timelineNominal, displayMode, inflation]
+  );
 
   const finalIdx = horizon * 12;
   const totalEnd = timeline.totals[finalIdx];
